@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🤖 Robot QA Bot</title>
+
+  <style>
+    /* ===========================
+       Robot QA Bot - External Styles
+       Author: Soham Kava
+       =========================== */
+
+    /* 🌌 Global Layout */
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top, #0a0a1f, #000);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ⚙️ Container */
+    .container {
+      max-width: 850px;
+      margin: 60px auto;
+      background: rgba(20, 20, 40, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* 🤖 Robot Icon Header */
+    .container::before {
+      content: "🤖";
+      font-size: 80px;
+      display: block;
+      animation: floatBot 3s ease-in-out infinite;
+    }
+
+    @keyframes floatBot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* 🧠 Title */
+    h1 {
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, #00eaff, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+      margin-bottom: 20px;
+    }
+
+    /* 📝 Form */
+    form {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: bold;
+      color: #00eaff;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 2px solid #00eaff;
+      background-color: #101020;
+      color: #fff;
+      padding: 10px;
+      resize: none;
+      transition: 0.3s;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00eaff;
+    }
+
+    /* 🧩 Buttons */
+    button, input[type="submit"] {
+      background: linear-gradient(90deg, #00eaff, #8b5cf6);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 25px;
+      font-size: 1rem;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover, input[type="submit"]:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00eaff;
+    }
+
+    /* 🟢 Flash Messages */
+    .flash {
+      color: #00eaff;
+      margin-top: 15px;
+    }
+
+    .error {
+      color: #ff4d4d;
+    }
+
+    /* 🎧 Audio Recorder Section */
+    #recording-status {
+      color: #ff4d4d;
+      display: none;
+      font-weight: bold;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* 🔄 Voice Processing Loading Animation - FULL SCREEN OVERLAY */
+    .voice-processing {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at top, #0a0a1f, #000);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .voice-processing > div {
+      width: 100px;
+      height: 100px;
+      border: 8px solid rgba(0, 255, 255, 0.2);
+      border-top: 8px solid #00eaff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .voice-processing p {
+      color: #00eaff;
+      margin-top: 20px;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* 🧾 Response Section */
+    .section {
+      margin-top: 25px;
+      border: 2px solid #00eaff;
+      border-radius: 15px;
+      padding: 20px;
+      background: rgba(10, 10, 20, 0.9);
+      text-align: left;
+    }
+
+    .section h2 {
+      color: #00eaff;
+      border-bottom: 1px solid #00eaff;
+      padding-bottom: 5px;
+    }
+
+    .section h3 {
+      color: #8b5cf6;
+      margin-top: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+      list-style-type: "⚡ ";
+    }
+
+    /* 🎵 Audio Player */
+    audio {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    audio::-webkit-media-controls-panel {
+      background: linear-gradient(90deg, rgba(0,234,255,0.2), rgba(139,92,246,0.2));
+    }
+
+    /* Debug Info */
+    #debug-info {
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔄 Voice Processing Loader -->
+  <div class="voice-processing" id="voice-loader">
+    <div></div>
+    <p>Processing your voice...</p>
+  </div>
+
+  <div class="container">
+    <h1>Assistant Robot</h1>
+
+    {% if flashed_messages %}
+      {% for category, message in flashed_messages %}
+        <p class="{{ category }}">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      <label for="question">Ask a Question (Text):</label><br>
+      <textarea id="question" name="question" rows="4" placeholder="Type your question here..." required></textarea><br>
+      <input type="submit" value="Ask">
+    </form>
+
+    <div style="margin-top:20px;">
+      <label>Ask a Question (Audio):</label><br>
+      <button id="start-recording">🎙 Start Recording (Camera Mic)</button>
+      <button id="stop-recording" disabled>⏹ Stop & Submit</button>
+      <p id="recording-status">Recording...</p>
+      <div id="debug-info"></div> 
+      <!-- Debug output here -->
+    </div>
+
+    {% if question %}
+      <div class="section">
+        <h2>Question: {{ question }}</h2>
+
+        {% if answer %}
+          {% set sections = answer.split('\n\n') %}
+          {% for section in sections %}
+            {% if section.startswith('Definition:') %}
+              <h3>Definition</h3>
+              <p>{{ section.split(':', 1)[1] | trim }}</p>
+
+            {% elif section.startswith('Key Points:') %}
+              <h3>Key Points</h3>
+              <ul>
+                {% for point in section.split(':', 1)[1].split('- ')[1:] %}
+                  {% if point.strip() %}
+                    <li>{{ point.strip() }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+
+            {% elif section.startswith('Example:') or section.startswith('Relevance:') %}
+              <h3>{{ section.split(':')[0] }}</h3>
+              <p>{{ section.split(':', 1)[1] | trim }}</p>
+
+            {% else %}
+              <p>{{ section }}</p>
+            {% endif %}
+          {% endfor %}
+
+          {% if audio_filename %}
+            <h3>Audio Response</h3>
+            <audio controls autoplay>
+              <source src="{{ url_for('serve_audio', filename=audio_filename) }}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          {% endif %}
+        {% else %}
+          <p>No answer available.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let cameraMicId = null;  // Will store the selected device ID
+    let currentStream = null;  // Track active stream
+
+    const loader = document.getElementById("voice-loader");
+    const startBtn = document.getElementById('start-recording');
+    const stopBtn = document.getElementById('stop-recording');
+    const status = document.getElementById('recording-status');
+    const debug = document.getElementById('debug-info');
+
+    function logDebug(msg) {
+      console.log(msg);
+    //   debug.innerHTML += '<p>' + new Date().toLocaleTimeString() + ': ' + msg + '</p>';
+    //   debug.scrollTop = debug.scrollHeight;
+    }
+
+    // Enhanced error handler
+    function handleError(err, step) {
+      const errorMsg = `Error at ${step}: ${err.name} - ${err.message}`;
+      logDebug(errorMsg);
+      alert(errorMsg + '\nCheck console for details. Common fixes: Use HTTPS, allow mic permission, or try incognito.');
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      status.style.display = 'none';
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+    }
+
+    // Step 1: Get permission & list devices on button click
+    startBtn.addEventListener('click', async () => {
+      logDebug('Start button clicked - initiating mic access...');
+      try {
+        // Step 1a: Request basic audio permission to list devices
+        logDebug('Requesting initial permission...');
+        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempStream.getTracks().forEach(track => track.stop());  // Stop temp stream
+        logDebug('Initial permission granted.');
+
+        // Step 2: Enumerate all devices
+        logDebug('Enumerating devices...');
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(device => device.kind === 'audioinput');
+        const videoInputs = devices.filter(device => device.kind === 'videoinput');
+
+        logDebug(`Found ${audioInputs.length} audio inputs, ${videoInputs.length} video inputs.`);
+        audioInputs.forEach((d, i) => logDebug(`Mic ${i}: Label="${d.label}", ID="${d.deviceId?.substring(0,10)}...", Group="${d.groupId?.substring(0,10)}..."`));
+
+        if (audioInputs.length === 0) {
+          throw new Error('No audio devices found. Check hardware/settings.');
+        }
+
+        // Step 3: Identify Camera Mic
+        logDebug('Searching for camera mic...');
+        // Priority 1: Label contains "camera" or "webcam"
+        cameraMicId = audioInputs.find(d => 
+          d.label.toLowerCase().includes('camera') || 
+          d.label.toLowerCase().includes('webcam') ||
+          d.label.toLowerCase().includes('facetime')  // For Mac
+        )?.deviceId;
+
+        if (!cameraMicId) {
+          // Priority 2: Match groupId with first video camera
+          const activeCameraGroup = videoInputs[0]?.groupId;
+          logDebug(`Active camera group: ${activeCameraGroup}`);
+          if (activeCameraGroup) {
+            cameraMicId = audioInputs.find(d => d.groupId === activeCameraGroup)?.deviceId;
+          }
+        }
+
+        if (!cameraMicId) {
+          // Fallback: Use first/default mic
+          logDebug('Camera mic not found - falling back to default mic.');
+          cameraMicId = audioInputs[0].deviceId;
+        }
+
+        logDebug(`Selected Mic ID: ${cameraMicId.substring(0,10)}...`);
+
+        // Step 4: Start recording with specific mic
+        logDebug('Starting recording with constraints...');
+        const constraints = {
+          audio: {
+            deviceId: { exact: cameraMicId },  // Locks to this device (use 'ideal' for fallback)
+            echoCancellation: { ideal: true },
+            noiseSuppression: { ideal: true },
+            sampleRate: { ideal: 48000 },
+            channelCount: { ideal: 1 }
+          }
+        };
+
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        mediaRecorder = new MediaRecorder(currentStream, { mimeType: 'audio/webm;codecs=opus' });
+
+        if (!mediaRecorder) {
+          throw new Error('MediaRecorder not supported or failed to init.');
+        }
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) audioChunks.push(event.data);
+          logDebug(`Data chunk received: ${event.data.size} bytes`);
+        };
+
+        mediaRecorder.onstop = () => {
+          logDebug('Recording stopped - processing...');
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          logDebug(`Blob created: ${audioBlob.size} bytes`);
+
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'question.webm');
+
+          loader.style.display = "flex";  // Show loader
+
+          fetch('/ask_audio', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            loader.style.display = "none";
+            logDebug('Fetch response status: ' + response.status);
+            if (response.redirected) {
+              window.location.href = response.url;
+            } else {
+              response.text().then(text => logDebug('Response body: ' + text.substring(0, 200) + '...'));
+            }
+          })
+          .catch(err => {
+            loader.style.display = "none";
+            handleError(err, 'Fetch upload');
+          });
+
+          audioChunks = [];  // Reset
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          status.style.display = 'none';
+        };
+
+        mediaRecorder.onerror = (event) => {
+          handleError(new Error('MediaRecorder error: ' + event.error), 'MediaRecorder');
+        };
+
+        mediaRecorder.start(1000);  // Timeslice for chunks every 1s
+        logDebug('MediaRecorder started.');
+
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        status.style.display = 'block';
+
+      } catch (err) {
+        handleError(err, 'Start Recording');
+      }
+    });
+
+    // Step 5: Stop recording
+    stopBtn.addEventListener('click', () => {
+      logDebug('Stop button clicked.');
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+      } else {
+        logDebug('No active recording to stop.');
+      }
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+    });
+
+    logDebug('Script loaded - ready for recording.');
+  </script>
+</body>
+</html>
