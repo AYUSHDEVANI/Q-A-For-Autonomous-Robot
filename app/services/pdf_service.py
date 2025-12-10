@@ -94,13 +94,18 @@ def check_and_process_pdfs():
     if has_index_in_db() and set(current_pdfs.keys()) == set(stored_pdfs.keys()) and all(
         current_pdfs[f] == stored_pdfs[f] for f in current_pdfs
     ):
-        try:
-            vectorstore = FAISS.load_local(INDEX_FOLDER, embedder, allow_dangerous_deserialization=True)
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
-            logger.debug("Loaded existing FAISS index successfully.")
-            return True, "Loaded existing index."
-        except Exception as e:
-            logger.exception("Failed to load existing index")
+        index_file_path = os.path.join(INDEX_FOLDER, "index.faiss")
+        if os.path.exists(index_file_path):
+            try:
+                vectorstore = FAISS.load_local(INDEX_FOLDER, embedder, allow_dangerous_deserialization=True)
+                retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
+                logger.debug("Loaded existing FAISS index successfully.")
+                return True, "Loaded existing index."
+            except Exception as e:
+                logger.error(f"Failed to load existing index: {e}")
+                # Fall through to rebuild
+        else:
+            logger.warning("Index metadata suggests existing index, but 'index.faiss' file is missing. Rebuilding...")
 
     if not current_pdfs:
         logger.warning("No PDFs found in folder")
