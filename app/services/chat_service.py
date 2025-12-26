@@ -33,10 +33,15 @@ workflow_app = None
 
 def init_chat_model():
     global llm, workflow_app
-    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         logger.warning("GROQ_API_KEY not found. Chat features may fail.")
-    llm = ChatGroq(groq_api_key=api_key, model_name=GROQ_MODEL, temperature=0.5)
+    
+    # Initialize ChatGroq
+    llm = ChatGroq(
+        groq_api_key=api_key, 
+        model_name=GROQ_MODEL, 
+        temperature=0.5
+    )
     
     # Build Workflow
     workflow = StateGraph(State)
