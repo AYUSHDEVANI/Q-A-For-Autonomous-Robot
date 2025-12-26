@@ -12,8 +12,31 @@ if not DATABASE_URL:
     os.makedirs('instance', exist_ok=True)
     DATABASE_URL = 'sqlite:///instance/robot_qa.db'
     logger.info("Using Local SQLite Database")
-else:
+import socket
+from urllib.parse import urlparse
+
+# ... existing code ...
+
+if DATABASE_URL and 'sqlite' not in DATABASE_URL:
     logger.info("Using Remote Database")
+    # IPv4 Force Logic for Render/Supabase
+    try:
+        parsed = urlparse(DATABASE_URL)
+        hostname = parsed.hostname
+        if hostname:
+            # Resolve to IPv4
+            ip = socket.getaddrinfo(hostname, None, socket.AF_INET)[0][4][0]
+            logger.info(f"Resolved {hostname} to IPv4: {ip}")
+            DATABASE_URL = DATABASE_URL.replace(hostname, ip)
+    except Exception as e:
+        logger.warning(f"Failed to force IPv4 resolution: {e}")
+        
+    engine = create_engine(DATABASE_URL)
+else:
+    logger.info("Using Local SQLite Database")
+    engine = create_engine(DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
@@ -29,8 +52,6 @@ class IndexStatus(Base):
     created = Column(DateTime, default=func.now())
     last_updated = Column(DateTime, default=func.now())
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
