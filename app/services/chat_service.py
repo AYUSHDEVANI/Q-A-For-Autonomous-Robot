@@ -33,6 +33,7 @@ workflow_app = None
 
 def init_chat_model():
     global llm, workflow_app
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         logger.warning("GROQ_API_KEY not found. Chat features may fail.")
     
