@@ -6,7 +6,11 @@ echo "Building..."
 
 # 1. Install Python Dependencies
 echo "Installing Python dependencies..."
-pip install -r requirements.txt
+# Install uv for faster dependency resolution
+pip install uv
+
+# Install dependencies using uv
+uv pip install --system -r requirements.txt
 
 # 2. Build Frontend
 echo "Building Frontend..."
