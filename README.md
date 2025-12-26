@@ -2,115 +2,94 @@
 
 **LabBot** is a modern, voice-enabled AI assistant designed to answer questions about engineering and robotics projects. It uses **Retrieval Augmented Generation (RAG)** to provide accurate answers based on PDF manuals, powered by cloud-native APIs for maximum efficiency.
 
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue) ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green) ![AI](https://img.shields.io/badge/AI-Groq%20%2B%20HuggingFace-orange)
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue) ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green) ![AI](https://img.shields.io/badge/AI-Groq%20%2B%20HuggingFace-orange) ![Pinecone](https://img.shields.io/badge/Vector%20DB-Pinecone-green) ![Supabase](https://img.shields.io/badge/Data%20%26%20Storage-Supabase-green)
 
 ---
 
 ## ✨ Key Features
 
 -   **🗣️ Voice Interaction:** Ask questions via microphone and get spoken responses (Speech-to-Text & Text-to-Speech).
--   **📚 PDF Knowledge Base:** Automatically ingests and indexes PDF documents from the `pdfs/` folder.
--   **🌩️ 100% Cloud AI:**
-    -   **Reasoning:** Groq API (Llama 3.1 8b) for instant answers.
-    -   **Embeddings:** Hugging Face Inference API for semantic search.
-    -   **Transcription:** Groq Whisper (Large-v3).
--   **🧠 Smart Memory:** Remembers the last 2 interactions for contextual follow-up questions.
--   **🎨 Modern UI:** Responsive, "Soft Light" themed React interface with real-time text streaming.
+-   **📚 PDF Knowledge Base:** Automatically ingests and indexes PDF documents from **Supabase Storage**.
+-   **🌩️ 100% Cloud Architecture:**
+    -   **Reasoning:** Groq API (Llama 3.1 8b).
+    -   **Embeddings:** Hugging Face Inference API (`all-MiniLM-L6-v2`).
+    -   **Vector Search:** Pinecone (Serverless).
+    -   **Storage:** Supabase (PostgreSQL & Object Storage).
+-   **🎨 Modern UI:** Responsive React interface with real-time text streaming.
 
 ---
 
 ## 🏗️ Architecture
 
-The project follows a **Headless Architecture**:
-
-1.  **Frontend (`frontend/`)**: A **React** application (Vite) that handles the UI, audio recording, and state management.
-2.  **Backend (`app/`)**: A **FastAPI** server that manages PDF processing (LangChain), vector search (FAISS), and LLM orchestration.
+1.  **Frontend (`frontend/`)**: React + Vite (Static Build served by Backend).
+2.  **Backend (`app/`)**: FastAPI server.
+3.  **Data Layer**:
+    -   **Pinecone**: Stores vector embeddings.
+    -   **Supabase Storage**: Stores raw PDF files.
+    -   **Supabase PostgreSQL**: Stores file metadata (via SQLAlchemy).
 
 ---
 
-## 🚀 Installation
+## 🚀 Installation & Setup
 
 ### Prerequisites
 -   **Python 3.8+**
--   **Node.js 16+** (for Frontend)
--   **API Keys:**
-    -   [Groq API Key](https://console.groq.com/)
-    -   [Hugging Face Access Token](https://huggingface.co/settings/tokens)
+-   **Node.js 16+**
+-   **Accounts:** [Groq](https://console.groq.com/), [Hugging Face](https://huggingface.co/), [Pinecone](https://pinecone.io/), [Supabase](https://supabase.com/).
 
-### 1. Backend Setup
+### 1. Environment Variables
+Create a `.env` file in the root directory:
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/robot-qa-bot.git
-cd robot-qa-bot
+# AI Models
+GROQ_API_KEY=your_groq_key
+HUGGINGFACEHUB_API_TOKEN=your_hf_token
 
-# Create Virtual Environment
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
+# Pinecone (Vector DB)
+PINECONE_API_KEY=your_pinecone_key
+PINECONE_INDEX_NAME=lab-bot
+# Note: Index Dimension must be 384 (Metric: Cosine)
 
-# Install Python Dependencies
-pip install -r requirements.txt
-
-# Create .env file
-# Add your keys:
-# GROQ_API_KEY=your_key_here
-# HUGGINGFACEHUB_API_TOKEN=your_token_here
+# Supabase (Data & Storage)
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_KEY=your_supabase_anon_key
+DATABASE_URL=postgresql://user:pass@host:port/postgres
+# Note: URL-encode password if it has special chars like '@' -> '%40'
 ```
 
-### 2. Frontend Setup
+### 2. Local Setup
 ```bash
-# Open a NEW terminal
-cd frontend
+# Backend
+python -m venv .venv
+# Activate venv
+pip install -r requirements.txt
 
-# Install Node Dependencies
+# Frontend
+cd frontend
 npm install
+npm run build 
+# (The backend serves the 'dist' folder automatically)
 ```
 
 ---
 
 ## ▶️ How to Run
 
-You need to run the **Backend** and **Frontend** in separate terminals.
-
-### Terminal 1: Start Backend (API)
+### Development
 ```bash
-python run.py
-```
-*Server will start at `http://localhost:8000` (API only).*
+# Start Backend
+python -m uvicorn app.main:app --reload
 
-### Terminal 2: Start Frontend (UI)
-```bash
-cd frontend
-npm run dev
-```
-*Click the link shown (usually `http://localhost:5173`) to open the app.*
-
----
-
-## 📂 Project Structure
-
-```
-├── app/                  # FastAPI Backend
-│   ├── services/         # Core Logic (PDF, Chat, Audio)
-│   ├── routes.py         # API Endpoints
-│   └── main.py           # App Entry Point
-├── frontend/             # React Frontend
-│   ├── src/              # Components & Styles
-│   └── package.json      # Node Dependencies
-├── pdfs/                 # Drop your PDF manuals here
-├── requirements.txt      # Python Dependencies
-└── run.py                # Backend Startup Script
+# Start Frontend (Separate Terminal)
+cd frontend && npm run dev
 ```
 
-## 🛠️ Configuration
-
--   **PDFs:** Place any `.pdf` file in the `pdfs/` folder. The app will automatically index it on the next restart.
--   **History Limit:** The bot remembers the last 2 turns. To change this, edit `request.session["history"]` in `app/routes.py`.
--   **Theme:** UI styles are defined in `frontend/src/index.css`.
+### Cloud Deployment (Render)
+This project is configured for **Render** (Web Service).
+1.  **Build Command**: `./build.sh`
+2.  **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port 10000`
+3.  **Environment Variables**: Add all keys from `.env` to Render Dashboard.
 
 ---
 
 ## 📝 License
-This project is open-source and free to use.
+MIT License.

@@ -45,6 +45,10 @@ app.add_middleware(
 
 # Mount Static
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# Mount Assets specifically (Vite build output might refer to /assets/...)
+# Ensure 'app/static/assets' exists for this to work
+if os.path.exists("app/static/assets"):
+    app.mount("/assets", StaticFiles(directory="app/static/assets"), name="assets")
 
 # Templates
 templates = Jinja2Templates(directory="app/templates")

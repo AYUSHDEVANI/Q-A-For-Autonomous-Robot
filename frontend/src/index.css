@@ -48,6 +48,14 @@ body {
   position: relative;
 }
 
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 /* Header */
 header {
   padding: 1rem 2rem;
@@ -121,8 +129,9 @@ header p {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Ensure messages don't overflow the container */
   background: white;
+  width: 100%;
 }
 
 .messages-container {
@@ -134,7 +143,7 @@ header p {
   gap: 1.5rem;
   scroll-behavior: smooth;
   background-color: #f8fafc;
-  padding-bottom: 150px; /* Space for input */
+  padding-bottom: 90px; /* Reduced from 150px since input is cleaner */
 }
 
 /* Message Bubbles */
@@ -267,9 +276,9 @@ header p {
 .icon-btn.play { color: var(--primary-color); }
 .icon-btn.stop { color: var(--secondary-color); }
 
-/* Input Area - Absolute to ensure it stays at bottom nicely */
+/* Input Area - Absolute but contained within relative chat-interface */
 .input-wrapper {
-  padding: 1.5rem;
+  padding: 1rem;
   background: white;
   border-top: 1px solid #e2e8f0;
   display: flex;
@@ -279,6 +288,7 @@ header p {
   left: 0;
   width: 100%;
   z-index: 20;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .input-container {
@@ -445,4 +455,74 @@ header p {
   .icon-btn svg {
     margin: 0;
   }
+}
+
+/* Audio Player Component Styles */
+.audio-player {
+  width: 100%;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  margin-top: 0.5rem;
+}
+
+.audio-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.control-btn {
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.main-play-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.main-play-btn:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
+.time-display {
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  min-width: 35px;
+  text-align: center;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #cbd5e1;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.progress-bar::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }

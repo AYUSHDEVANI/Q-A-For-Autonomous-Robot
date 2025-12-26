@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import { streamAnswer, generateTts, API_BASE_URL } from './api';
 import AudioRecorder from './AudioRecorder';
+import AudioPlayer from './AudioPlayer';
 import './index.css';
 
 function App() {
@@ -14,10 +15,8 @@ function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
   const [audioUrl, setAudioUrl] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   
   const messagesEndRef = useRef(null);
-  const audioRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,7 +27,8 @@ function App() {
     e.preventDefault();
     if (!question.trim() || isStreaming) return;
     
-    stopAudio();
+    // stopAudio(); // No manual stop needed, AudioPlayer handles its own state or we can reset audioUrl if needed
+    setAudioUrl(null); // Reset audio for new question
     const userMsg = { role: 'user', content: question };
     setMessages(prev => [...prev, userMsg]);
     setQuestion('');
@@ -90,28 +90,12 @@ function App() {
         const data = await generateTts(fullAnswer);
         if (data && data.audio_url) {
             setAudioUrl(`${API_BASE_URL}${data.audio_url}`);
-            setTimeout(() => {
-                playAudio();
-            }, 100);
+            // No need to manually play, AudioPlayer auto-plays when src changes
         }
     }
   };
   
-  // Audio Controls
-  const playAudio = () => {
-    if (audioRef.current) {
-        audioRef.current.play().catch(e => console.log("Audio play failed:", e));
-        setIsPlaying(true);
-    }
-  };
-
-  const stopAudio = () => {
-    if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        setIsPlaying(false);
-    }
-  };
+  // Audio Controls removed - handled by AudioPlayer
 
   // Handle Transcription from Recorder
   const handleTranscription = (text) => {
@@ -131,11 +115,6 @@ function App() {
             {isStreaming && (
                 <div className="status-badge processing">
                     <RefreshCw size={14} className="spin" /> Processing
-                </div>
-            )}
-            {isPlaying && (
-                <div className="status-badge playing">
-                    <Volume2 size={14} /> Speaking
                 </div>
             )}
         </div>
@@ -158,17 +137,7 @@ function App() {
                   
                   {/* Show audio controls only on the LATEST assistant message if audio is available */}
                   {msg.role === 'assistant' && idx === messages.length - 1 && audioUrl && (
-                    <div className="audio-controls">
-                        {isPlaying ? (
-                            <button className="icon-btn stop" onClick={stopAudio} title="Stop Audio">
-                                <StopCircle size={16} /> Stop
-                            </button>
-                        ) : (
-                            <button className="icon-btn play" onClick={playAudio} title="Replay">
-                                <Volume2 size={16} /> Replay
-                            </button>
-                        )}
-                    </div>
+                    <AudioPlayer src={audioUrl} />
                   )}
                 </div>
              </motion.div>
@@ -205,14 +174,6 @@ function App() {
         </div>
       </main>
 
-      <audio 
-        ref={audioRef} 
-        src={audioUrl || ""} 
-        style={{ display: 'none' }} 
-        onEnded={() => setIsPlaying(false)}
-        onPause={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
-      />
     </div>
   );
 }
