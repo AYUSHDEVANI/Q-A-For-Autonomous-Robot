@@ -7,16 +7,15 @@ python-dotenv==1.0.1
 cachetools==5.5.0
 
 # AI & LangChain - Pinning to 0.3.x ecosystem to prevent backtracking
-# AI & LangChain - Pinning to 0.3.x ecosystem to prevent backtracking
-langchain>=0.3.0
-langchain-core>=0.3.0
-langchain-community>=0.3.0
-# Using older stable langchain-groq to avoid proxy bug in 0.2+
+# AI & LangChain - Downgrading to 0.2.x stable ecosystem
+langchain==0.2.16
+langchain-core==0.2.38
+langchain-community==0.2.16
 langchain-groq==0.1.9
-groq<=1.0.0
-langchain-huggingface>=0.1.0
-langchain-text-splitters>=0.3.0
-langgraph>=0.2.0
+groq<1.0.0
+langchain-huggingface>=0.0.3
+langchain-text-splitters==0.2.4
+langgraph==0.2.16
 
 
 # PDF & Search
