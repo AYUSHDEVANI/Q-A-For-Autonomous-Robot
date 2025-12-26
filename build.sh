@@ -6,8 +6,9 @@ echo "Building..."
 
 # 1. Install Python Dependencies
 echo "Installing Python dependencies..."
-pip install --upgrade pip
-pip install -r requirements.txt
+pip install uv
+# Explicitly install into the active virtual environment using uv
+uv pip install --python "$VIRTUAL_ENV" -r requirements.txt
 
 # 2. Build Frontend
 echo "Building Frontend..."

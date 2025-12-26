@@ -7,14 +7,14 @@ python-dotenv==1.0.1
 cachetools==5.5.0
 
 # AI & LangChain - Pinning to 0.3.x ecosystem to prevent backtracking
-# AI & LangChain
-langchain
-langchain-core
-langchain-community
-langchain-groq
-langchain-huggingface
-langchain-text-splitters
-langgraph
+# AI & LangChain - Pinning to 0.3.x ecosystem to prevent backtracking
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-groq>=0.2.0
+langchain-huggingface>=0.1.0
+langchain-text-splitters>=0.3.0
+langgraph>=0.2.0
 
 
 # PDF & Search
