@@ -9,7 +9,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from langchain_pinecone import PineconeVectorStore
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from app.services.db_service import (
     get_pdf_hashes_from_db,
     update_pdf_in_db,
@@ -28,22 +28,21 @@ os.makedirs(PDF_FOLDER, exist_ok=True)
 os.makedirs(INDEX_FOLDER, exist_ok=True)
 
 # Initialize Models
+# We strictly use API-based Embeddings for Cloud Deployment
 hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+
 if not hf_token:
-    logger.warning("HUGGINGFACEHUB_API_TOKEN not found.")
-
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
-
-if hf_token:
+    logger.error("HUGGINGFACEHUB_API_TOKEN not found! Embeddings will fail.")
+    # We default to a placeholder to avoid crash on import, but runtime will fail if used.
+    # This prevents 'torch' from being required by local HuggingFaceEmbeddings.
     embedder = HuggingFaceEndpointEmbeddings(
-        huggingfacehub_api_token=hf_token,
+        huggingfacehub_api_token="MISSING_TOKEN",
         model="sentence-transformers/all-MiniLM-L6-v2",
         task="feature-extraction"
     )
 else:
-    logger.error("API Token missing for API-based embeddings!")
     embedder = HuggingFaceEndpointEmbeddings(
-        huggingfacehub_api_token="MISSING_TOKEN", 
+        huggingfacehub_api_token=hf_token,
         model="sentence-transformers/all-MiniLM-L6-v2",
         task="feature-extraction"
     )

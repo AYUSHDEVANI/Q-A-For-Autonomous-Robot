@@ -8,7 +8,7 @@ from cachetools import TTLCache
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
-from ddgs import DDGS
+from duckduckgo_search import DDGS
 from app.services.pdf_service import get_retriever
 
 logger = logging.getLogger(__name__)
