@@ -12,8 +12,8 @@ langchain-core==0.3.29
 langchain-community==0.3.14
 langchain-groq==0.2.3
 groq==0.15.0
-langchain-huggingface==0.1.0
-huggingface-hub>=0.27.0
+langchain-huggingface==0.1.2
+huggingface-hub==0.25.2
 langchain-text-splitters==0.3.5
 langgraph==0.2.61
 
