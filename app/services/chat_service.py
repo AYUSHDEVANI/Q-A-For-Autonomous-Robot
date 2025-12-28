@@ -73,10 +73,14 @@ def pdf_retrieve_node(state: State) -> State:
         # For simplicity, we search with the raw question, but ideally we'd condense.
         # Let's keep retrieval simple for now as per user request to just "Add history to prompt".
         docs = retriever.invoke(state["question"])
-        logger.info(f"Retrieved {len(docs)} documents.")
-        context = "\\n\\n".join(doc.page_content for doc in docs)
-        state["context"] = context
+        doc_count = len(docs)
+        logger.info(f"Retrieved {doc_count} documents from vector store.")
+        if docs:
+            sources = [f"{d.metadata.get('pdf', 'unknown')}:p{d.metadata.get('page', '?')}" for d in docs]
+            logger.info(f"Retrieved sources: {sources}")
         
+        context = "\\n\\n".join(doc.page_content for doc in docs)
+        state["context"] = context        
         # REMOVED: Local CrossEncoder Re-ranking
         # Assuming retrieval is good enough or relying on LLM to filter.
         # Set a default high relevance since we trust the retriever + LLM prompt
@@ -189,7 +193,12 @@ async def stream_answer(question: str, history: list = []):
     # Check history to refine query? (Optional refinement step omitted for brevity)
     try:
         docs = retriever.invoke(question)
-        logger.info(f"Retrieved {len(docs)} documents.")
+        doc_count = len(docs)
+        logger.info(f"Retrieved {doc_count} documents from vector store.")
+        if docs:
+            sources = [f"{d.metadata.get('pdf', 'unknown')}:p{d.metadata.get('page', '?')}" for d in docs]
+            logger.info(f"Retrieved sources: {sources}")
+            
         context = "\\n\\n".join(doc.page_content for doc in docs)
         
         # REMOVED: Local CrossEncoder Re-ranking
