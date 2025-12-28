@@ -73,7 +73,7 @@ async def ask(request: Request, question: str = Form(...)):
     request.session['answer'] = answer
     
     logger.info("Generating audio for answer...")
-    audio_filename = generate_audio_file(answer)
+    audio_filename = await generate_audio_file(answer)
     if audio_filename:
         logger.info(f"Audio generated: {audio_filename}")
         request.session['audio_filename'] = audio_filename
@@ -112,7 +112,7 @@ async def ask_audio(request: Request, audio: UploadFile = File(...)):
         request.session['answer'] = answer
 
         logger.info("Generating audio response...")
-        audio_filename = generate_audio_file(answer)
+        audio_filename = await generate_audio_file(answer)
         if audio_filename:
             request.session['audio_filename'] = audio_filename
         else:
@@ -155,7 +155,7 @@ async def ask_stream(request: Request, question: str):
 @router.post("/api/tts", response_model=TTSResponse)
 async def api_tts(request: TTSRequest):
     logger.info(f"API TTS request for {len(request.text)} chars.")
-    audio_filename = generate_audio_file(request.text)
+    audio_filename = await generate_audio_file(request.text)
     if not audio_filename:
         # Fallback or error
         return JSONResponse(status_code=500, content={"message": "Audio generation failed"})

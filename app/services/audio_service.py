@@ -1,7 +1,8 @@
 import os
 import uuid
 import logging
-from gtts import gTTS
+import edge_tts
+
 
 logger = logging.getLogger(__name__)
 
@@ -10,16 +11,20 @@ logger = logging.getLogger(__name__)
 AUDIO_FOLDER = os.path.join('app', 'static', 'audio')
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 
-def generate_audio_file(answer_text):
+async def generate_audio_file(answer_text):
     if not answer_text or answer_text.startswith(("Error", "No PDFs")):
         logger.warning("Skipping audio generation due to error or empty response.")
         return None
     try:
-        logger.info(f"Generating audio for text ({len(answer_text)} chars).")
-        tts = gTTS(text=answer_text, lang='en')
+        logger.info(f"Generating audio for text ({len(answer_text)} chars) using edge-tts.")
+        # Voice: en-US-AriaNeural is a good default
+        communicate = edge_tts.Communicate(answer_text, "en-US-AriaNeural")
+        
         audio_filename = f"answer_{uuid.uuid4().hex[:8]}.mp3"
         audio_path = os.path.join(AUDIO_FOLDER, audio_filename)
-        tts.save(audio_path)
+        
+        await communicate.save(audio_path)
+        
         logger.info(f"Audio file saved: {audio_path}")
         return audio_filename
     except Exception as e:
