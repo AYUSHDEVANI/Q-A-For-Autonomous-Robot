@@ -1,32 +1,32 @@
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
+fastapi==0.124.0
+uvicorn[standard]==0.38.0
 python-multipart==0.0.20
-jinja2==3.1.5
+jinja2==3.1.6
 itsdangerous==2.2.0
-python-dotenv==1.0.1
-cachetools==5.5.0
+python-dotenv==1.2.1
+cachetools==6.2.2
 
 # AI & LangChain
-langchain==0.3.14
-langchain-core==0.3.29
-langchain-community==0.3.14
-langchain-groq==0.2.3
-groq==0.15.0
-langchain-huggingface==0.1.2
-huggingface-hub==0.25.2
-langchain-text-splitters==0.3.5
-langgraph==0.2.61
+langchain==1.1.2
+langchain-core==1.2.5
+langchain-community==0.4.1
+langchain-groq==1.1.0
+groq==0.37.1
+langchain-huggingface==1.1.0
+huggingface-hub==0.36.0
+langchain-text-splitters==1.0.0
+langgraph==1.0.4
 
 # PDF & Search
-pdfplumber==0.11.5
+pdfplumber==0.11.8
 faiss-cpu==1.9.0.post1
-duckduckgo-search==7.2.1
+duckduckgo-search==8.1.1
 
 # Audio
 edge-tts==6.1.9
 
-pinecone==5.4.0
-langchain-pinecone==0.2.1
-supabase==2.11.0
-sqlalchemy==2.0.36
-psycopg2-binary==2.9.10
+pinecone==7.3.0
+langchain-pinecone==0.2.13
+supabase==2.27.0
+sqlalchemy==2.0.44
+psycopg2-binary==2.9.11
